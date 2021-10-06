@@ -59,7 +59,7 @@ newTeamMember = () => {
             } else {
                 newMember = new Manager(name, id, email, roleSpec);
             }
-            employees.push(newestMember);
+            currentEmployees.push(newestMember);
             generateMemberHTML(newestMember)
                 .then(function () {
                     if (addMembers === "yes") {
