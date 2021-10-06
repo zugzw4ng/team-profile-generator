@@ -31,7 +31,7 @@ const setHTMLFinish = `
 </html>`
 
 function init() {
-    generateHTML();
+    generateHTMLStart();
     addTeamMember();
 }
 
@@ -74,7 +74,7 @@ function addTeamMember() {
                     type: "list",
                     message: "Add more team members?",
                     name: "addMembers",
-                    choices: [yes, no],
+                    choices: ["yes", "no"],
                 }
             ])
         }
@@ -94,20 +94,54 @@ function addTeamMember() {
                     if (addMembers === "yes") {
                         addTeamMember();
                     } else {
-                        finishHTML();
+                        generateHTMLFinish();
                     }
                 });
         })
 }
 
-function generateHTML() {
-    fs.writeFile("./dist/team-profile.html", setHTMLStart, function(err) {
+function generateHTMLStart() {
+    fs.writeFile("./dist/team-profile.html", setHTMLStart, function (err) {
         if (err) {
             console.log(err);
         }
     })
 }
 
-function generateMemberHTML()
+function generateMemberHTML(member) {
+    return new Promise(function (resolve, reject) {
+        const name = member.getName();
+        const role = member.getRole();
+        const id = member.getId();
+        const email = member.getEmail();
+        let data = ``;
+        if (role === "Engineer") {
+            const gitHubUser = member.getGithub();
+            data = ``;
+        } else if (role === "Intern") {
+            const schoolName = member.getSchool();
+            data = ``;
+        } else {
+            const officeNumber = member.getOfficeNumber();
+            data = ``;
+        }
+        console.log("adding team member...");
+        fs.appendFile("./dist/team-profile.html", data, function (err) {
+            if (err) {
+                return reject(err);
+            };
+            return resolve();
+        });
+    });
+}
 
+function generateHTMLFinish() {
+    fs.appendFile("./dist/team-profile.html", setHTMLFinish, function (err) {
+        if (err) {
+            console.log(err);
+        };
+    });
+    console.log("Complete!");
+}
 
+init();
