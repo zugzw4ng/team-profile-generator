@@ -15,9 +15,9 @@ const setHTMLStart = `<!DOCTYPE html>
     <link rel="stylesheet" href="./style.css">
     <title>Team Profile</title>
 </head>
-<body>
+<body class="orange lighten-5">
     <header>
-        <h1>
+        <h1 class="center">
             Team Profile
         </h1>
     </header>
@@ -74,30 +74,30 @@ function addTeamMember() {
                     type: "list",
                     message: "Add more team members?",
                     name: "addMembers",
-                    choices: ["yes", "no"],
+                    choices: ["yes", "no"]
                 }
             ])
-        }
-        )
-        .then(function ({ roleSpec, addMembers }) {
-            let newestMember;
-            if (role === "Engineer") {
-                newestMember = new Engineer(name, id, email, roleSpec)
-            } else if (role === "Intern") {
-                newestMember = new Intern(name, id, email, roleSpec)
-            } else {
-                newestMember = new Manager(name, id, email, roleSpec);
-            }
-            currentEmployees.push(newestMember);
-            generateMemberHTML(newestMember)
-                .then(function () {
-                    if (addMembers === "yes") {
-                        addTeamMember();
+                .then(function ({ roleSpec, addMembers }) {
+                    let newestMember;
+                    if (role === "Engineer") {
+                        newestMember = new Engineer(name, id, email, roleSpec)
+                    } else if (role === "Intern") {
+                        newestMember = new Intern(name, id, email, roleSpec)
                     } else {
-                        generateHTMLFinish();
+                        newestMember = new Manager(name, id, email, roleSpec);
                     }
-                });
+                    currentEmployees.push(newestMember);
+                    generateMemberHTML(newestMember)
+                        .then(function () {
+                            if (addMembers === "yes") {
+                                addTeamMember();
+                            } else {
+                                generateHTMLFinish();
+                            }
+                        });
+                })
         })
+
 }
 
 function generateHTMLStart() {
@@ -114,16 +114,55 @@ function generateMemberHTML(member) {
         const role = member.getRole();
         const id = member.getId();
         const email = member.getEmail();
-        let data = ``;
+        let data = "";
         if (role === "Engineer") {
-            const gitHubUser = member.getGithub();
-            data = ``;
+            const gitHubName = member.getGithub();
+            data = `<div class="col s6">
+            <div class="card blue-grey darken-1">
+              <div class="card-content white-text">
+                <span class="card-title">${name}, Engineer</span>
+              </div>
+              <div class="card-action">
+               <ul class="list-group list-group-flush">
+                <li class="list-group-item">ID: ${id}</li>
+                <li class="list-group-item">Email Address: ${email}</li>
+                <li class="list-group-item">GitHub: ${gitHubName}</li>
+            </ul>
+              </div>
+            </div>
+          </div>`;
         } else if (role === "Intern") {
             const schoolName = member.getSchool();
-            data = ``;
+            data = `<div class="col s6">
+            <div class="card blue-grey darken-1">
+              <div class="card-content white-text">
+                <span class="card-title">${name}, Intern</span>
+              </div>
+              <div class="card-action">
+               <ul class="list-group list-group-flush">
+                <li class="list-group-item">ID: ${id}</li>
+                <li class="list-group-item">Email Address: ${email}</li>
+                <li class="list-group-item">School Name: ${schoolName}</li>
+            </ul>
+              </div>
+            </div>
+          </div>`;
         } else {
             const officeNumber = member.getOfficeNumber();
-            data = ``;
+            data = `<div class="col s6">
+            <div class="card blue-grey darken-1">
+              <div class="card-content white-text">
+                <span class="card-title">${name}, Manager</span>
+              </div>
+              <div class="card-action">
+               <ul class="list-group list-group-flush">
+                <li class="list-group-item">ID: ${id}</li>
+                <li class="list-group-item">Email Address: ${email}</li>
+                <li class="list-group-item">Office Contact Number: ${officeNumber}</li>
+            </ul>
+              </div>
+            </div>
+          </div>`;
         }
         console.log("adding team member...");
         fs.appendFile("./dist/team-profile.html", data, function (err) {
